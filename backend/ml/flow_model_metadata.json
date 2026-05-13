@@ -1,0 +1,400 @@
+{
+  "modelType": "XGBoost(500)+RandomForest(400) soft-voting [1:1] + SHAP via LGB",
+  "dataset": "UNSW-NB15 (real network intrusion dataset)",
+  "trainSamples": 175341,
+  "testSamples": 82332,
+  "classes": [
+    "brute-force",
+    "ddos",
+    "malware",
+    "normal",
+    "port-scanning",
+    "privilege-escalation",
+    "unauthorized-access",
+    "vulnerability-exploit"
+  ],
+  "accuracy": 0.7571,
+  "f1Weighted": 0.7775,
+  "f1Macro": 0.5468,
+  "featureCount": 46,
+  "featureNames": [
+    "proto",
+    "service",
+    "state",
+    "dur",
+    "spkts",
+    "dpkts",
+    "sbytes",
+    "dbytes",
+    "rate",
+    "sttl",
+    "dttl",
+    "sload",
+    "dload",
+    "sloss",
+    "dloss",
+    "sinpkt",
+    "dinpkt",
+    "sjit",
+    "djit",
+    "swin",
+    "stcpb",
+    "dtcpb",
+    "dwin",
+    "tcprtt",
+    "synack",
+    "ackdat",
+    "smean",
+    "dmean",
+    "trans_depth",
+    "response_body_len",
+    "ct_srv_src",
+    "ct_state_ttl",
+    "ct_dst_ltm",
+    "ct_src_dport_ltm",
+    "ct_dst_sport_ltm",
+    "ct_dst_src_ltm",
+    "is_ftp_login",
+    "ct_ftp_cmd",
+    "ct_flw_http_mthd",
+    "ct_src_ltm",
+    "ct_srv_dst",
+    "is_sm_ips_ports",
+    "bytes_ratio",
+    "pkts_ratio",
+    "byte_per_pkt",
+    "conn_density"
+  ],
+  "topFeatures": [
+    {
+      "feature": "sttl",
+      "importance": 0.699779
+    },
+    {
+      "feature": "sbytes",
+      "importance": 0.54668
+    },
+    {
+      "feature": "service",
+      "importance": 0.470983
+    },
+    {
+      "feature": "smean",
+      "importance": 0.384107
+    },
+    {
+      "feature": "bytes_ratio",
+      "importance": 0.333772
+    },
+    {
+      "feature": "proto",
+      "importance": 0.319
+    },
+    {
+      "feature": "ct_srv_dst",
+      "importance": 0.265803
+    },
+    {
+      "feature": "ct_dst_src_ltm",
+      "importance": 0.22893
+    },
+    {
+      "feature": "ct_dst_sport_ltm",
+      "importance": 0.227474
+    },
+    {
+      "feature": "conn_density",
+      "importance": 0.226728
+    },
+    {
+      "feature": "byte_per_pkt",
+      "importance": 0.220634
+    },
+    {
+      "feature": "dload",
+      "importance": 0.216182
+    },
+    {
+      "feature": "sloss",
+      "importance": 0.206009
+    },
+    {
+      "feature": "ct_src_dport_ltm",
+      "importance": 0.203641
+    },
+    {
+      "feature": "ct_srv_src",
+      "importance": 0.194416
+    },
+    {
+      "feature": "dmean",
+      "importance": 0.153456
+    },
+    {
+      "feature": "dbytes",
+      "importance": 0.147376
+    },
+    {
+      "feature": "synack",
+      "importance": 0.137456
+    },
+    {
+      "feature": "dloss",
+      "importance": 0.127383
+    },
+    {
+      "feature": "dtcpb",
+      "importance": 0.120858
+    }
+  ],
+  "perClassTopFeatures": {
+    "brute-force": [
+      {
+        "feature": "sttl",
+        "importance": 0.633944
+      },
+      {
+        "feature": "service",
+        "importance": 0.5028
+      },
+      {
+        "feature": "ct_dst_src_ltm",
+        "importance": 0.482766
+      },
+      {
+        "feature": "sbytes",
+        "importance": 0.425779
+      },
+      {
+        "feature": "synack",
+        "importance": 0.327866
+      }
+    ],
+    "ddos": [
+      {
+        "feature": "ct_srv_dst",
+        "importance": 0.541878
+      },
+      {
+        "feature": "conn_density",
+        "importance": 0.372166
+      },
+      {
+        "feature": "smean",
+        "importance": 0.304998
+      },
+      {
+        "feature": "sttl",
+        "importance": 0.279679
+      },
+      {
+        "feature": "bytes_ratio",
+        "importance": 0.257806
+      }
+    ],
+    "malware": [
+      {
+        "feature": "bytes_ratio",
+        "importance": 0.541226
+      },
+      {
+        "feature": "dtcpb",
+        "importance": 0.37858
+      },
+      {
+        "feature": "ct_srv_src",
+        "importance": 0.334139
+      },
+      {
+        "feature": "sloss",
+        "importance": 0.318682
+      },
+      {
+        "feature": "service",
+        "importance": 0.305298
+      }
+    ],
+    "normal": [
+      {
+        "feature": "sttl",
+        "importance": 3.08003
+      },
+      {
+        "feature": "proto",
+        "importance": 1.153643
+      },
+      {
+        "feature": "bytes_ratio",
+        "importance": 0.701489
+      },
+      {
+        "feature": "ct_dst_sport_ltm",
+        "importance": 0.550491
+      },
+      {
+        "feature": "ct_state_ttl",
+        "importance": 0.500502
+      }
+    ],
+    "port-scanning": [
+      {
+        "feature": "sloss",
+        "importance": 1.039879
+      },
+      {
+        "feature": "smean",
+        "importance": 0.625948
+      },
+      {
+        "feature": "sbytes",
+        "importance": 0.452874
+      },
+      {
+        "feature": "dload",
+        "importance": 0.422414
+      },
+      {
+        "feature": "conn_density",
+        "importance": 0.325237
+      }
+    ],
+    "privilege-escalation": [
+      {
+        "feature": "sbytes",
+        "importance": 1.203925
+      },
+      {
+        "feature": "service",
+        "importance": 1.196986
+      },
+      {
+        "feature": "ct_src_dport_ltm",
+        "importance": 0.903177
+      },
+      {
+        "feature": "sttl",
+        "importance": 0.855251
+      },
+      {
+        "feature": "proto",
+        "importance": 0.614597
+      }
+    ],
+    "unauthorized-access": [
+      {
+        "feature": "sbytes",
+        "importance": 1.653149
+      },
+      {
+        "feature": "service",
+        "importance": 1.172191
+      },
+      {
+        "feature": "ct_dst_sport_ltm",
+        "importance": 0.882961
+      },
+      {
+        "feature": "smean",
+        "importance": 0.368216
+      },
+      {
+        "feature": "sttl",
+        "importance": 0.280523
+      }
+    ],
+    "vulnerability-exploit": [
+      {
+        "feature": "smean",
+        "importance": 0.602855
+      },
+      {
+        "feature": "ct_srv_dst",
+        "importance": 0.551303
+      },
+      {
+        "feature": "dttl",
+        "importance": 0.249794
+      },
+      {
+        "feature": "sttl",
+        "importance": 0.219903
+      },
+      {
+        "feature": "conn_density",
+        "importance": 0.197583
+      }
+    ]
+  },
+  "perClassMetrics": {
+    "brute-force": {
+      "precision": 0.3025,
+      "recall": 0.597,
+      "f1": 0.4015,
+      "support": 6062
+    },
+    "ddos": {
+      "precision": 0.6198,
+      "recall": 0.1208,
+      "f1": 0.2022,
+      "support": 4089
+    },
+    "malware": {
+      "precision": 0.0192,
+      "recall": 0.1053,
+      "f1": 0.0324,
+      "support": 627
+    },
+    "normal": {
+      "precision": 0.9638,
+      "recall": 0.7551,
+      "f1": 0.8468,
+      "support": 37000
+    },
+    "port-scanning": {
+      "precision": 0.6571,
+      "recall": 0.6957,
+      "f1": 0.6758,
+      "support": 4173
+    },
+    "privilege-escalation": {
+      "precision": 0.4039,
+      "recall": 0.7725,
+      "f1": 0.5304,
+      "support": 378
+    },
+    "unauthorized-access": {
+      "precision": 0.9961,
+      "recall": 0.973,
+      "f1": 0.9844,
+      "support": 18871
+    },
+    "vulnerability-exploit": {
+      "precision": 0.638,
+      "recall": 0.7775,
+      "f1": 0.7009,
+      "support": 11132
+    }
+  },
+  "attackMap": {
+    "Normal": "normal",
+    "Generic": "unauthorized-access",
+    "Exploits": "vulnerability-exploit",
+    "Fuzzers": "brute-force",
+    "DoS": "ddos",
+    "Reconnaissance": "port-scanning",
+    "Analysis": "port-scanning",
+    "Backdoor": "malware",
+    "Shellcode": "privilege-escalation",
+    "Worms": "malware"
+  },
+  "improvements": [
+    "log1p transforms for heavy-tailed features",
+    "4 engineered ratio features (bytes_ratio, pkts_ratio, byte_per_pkt, conn_density)",
+    "RF-weighted ensemble [1:2] \u2014 RF empirically best on UNSW-NB15",
+    "XGBoost full 500 trees for maximum individual accuracy",
+    "LightGBM for SHAP explanations (TreeExplainer quality)",
+    "500 trees each, balanced class weights"
+  ],
+  "trainedAt": "2026-05-13T15:53:37.469250",
+  "version": "5.0"
+}
