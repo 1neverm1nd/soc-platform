@@ -7,6 +7,7 @@ import { Zap, X, Play, Square, Terminal } from "lucide-react";
 import { toast } from "sonner";
 
 const ATTACKS = [
+  // Original classes
   { type: "brute-force",          label: "Brute Force",      log: "SSH brute force: {n} failed attempts from {ip}" },
   { type: "sql-injection",        label: "SQL Injection",     log: "SQLi detected: ' OR 1=1-- from {ip} on /api/users" },
   { type: "phishing",             label: "Phishing",          log: "Phishing email from spoofed domain targeting {user}@corp.local" },
@@ -17,6 +18,16 @@ const ATTACKS = [
   { type: "unauthorized-access",  label: "Unauth. Access",    log: "Unauthorized access from {ip} to restricted /admin endpoint" },
   { type: "port-scanning",        label: "Port Scan",         log: "Nmap scan from {ip}: {n} ports probed in 5 seconds" },
   { type: "vulnerability-exploit",label: "Vuln Exploit",      log: "Log4Shell exploit attempt CVE-2021-44228 from {ip}" },
+  // Expanded classes
+  { type: "ransomware",           label: "Ransomware",        log: "Ransomware LockBit.3 encrypting files: {n} files/min on finance-server" },
+  { type: "lateral-movement",     label: "Lateral Move",      log: "PsExec lateral movement from {ip} to 10.0.0.{n} using compromised creds" },
+  { type: "command-and-control",  label: "C2 Beacon",         log: "Cobalt Strike beacon from {ip}: C2 check-in every 60s, encrypted channel" },
+  { type: "cryptomining",         label: "Cryptomining",      log: "XMRig mining process detected on server-{n}: CPU 98%, pool stratum+tcp://{ip}" },
+  { type: "backdoor",             label: "Backdoor",          log: "Reverse shell backdoor installed on host-{n}: listening on port {n}" },
+  { type: "shellcode",            label: "Shellcode",         log: "Heap spray shellcode detected in browser process, source {ip}" },
+  { type: "worm",                 label: "Worm",              log: "Self-replicating worm spreading via SMB from {ip} to subnet 10.0.{n}.0/24" },
+  { type: "fuzzing",              label: "Fuzzing",           log: "Fuzzing attack: {n} malformed requests/sec from {ip} to /api/parse" },
+  { type: "network-analysis",     label: "Network Sniff",     log: "Promiscuous mode NIC detected on 10.0.0.{n}: packet capture in progress" },
 ];
 
 const COUNTRY_POOL = [

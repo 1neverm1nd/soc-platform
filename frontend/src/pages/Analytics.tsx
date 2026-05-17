@@ -223,9 +223,9 @@ export function AnalyticsPage() {
         </CardHeader>
         <div className="grid grid-cols-3 gap-3">
           {[
-            { label: "Architecture", main: "XGB + RF + ExtraTrees", sub: "Soft-voting ensemble (x2+x3+x1)" },
-            { label: "Accuracy", main: "75.8%", sub: "UNSW-NB15 test set, 10 classes", green: true },
-            { label: "Features", main: "46", sub: "network flow + 4 engineered" },
+            { label: "Architecture", main: "XGB + RF + ExtraTrees", sub: "Soft-voting [2:3:1], SHAP via LGB" },
+            { label: "Accuracy", main: "73.6%", sub: "UNSW-NB15 test set, 10 classes", green: true },
+            { label: "Features", main: "46 + 4", sub: "network flow + engineered ratios" },
           ].map(({ label, main, sub, green }) => (
             <div key={label} className="p-3 rounded-lg" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)" }}>
               <div className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wider mb-1">{label}</div>

@@ -1,21 +1,23 @@
 {
-  "modelType": "XGBoost(500)+RandomForest(400) soft-voting [1:1] + SHAP via LGB",
+  "modelType": "XGBoost(600)+RandomForest(500)+ExtraTrees(500) soft-voting [2:3:1] + SHAP via LGB",
   "dataset": "UNSW-NB15 (real network intrusion dataset)",
   "trainSamples": 175341,
   "testSamples": 82332,
   "classes": [
-    "brute-force",
+    "backdoor",
     "ddos",
-    "malware",
+    "fuzzing",
+    "network-analysis",
     "normal",
     "port-scanning",
-    "privilege-escalation",
+    "shellcode",
     "unauthorized-access",
-    "vulnerability-exploit"
+    "vulnerability-exploit",
+    "worm"
   ],
-  "accuracy": 0.7571,
-  "f1Weighted": 0.7775,
-  "f1Macro": 0.5468,
+  "accuracy": 0.7357,
+  "f1Weighted": 0.7731,
+  "f1Macro": 0.5354,
   "featureCount": 46,
   "featureNames": [
     "proto",
@@ -68,333 +70,441 @@
   "topFeatures": [
     {
       "feature": "sttl",
-      "importance": 0.699779
+      "importance": 0.583142
     },
     {
       "feature": "sbytes",
-      "importance": 0.54668
+      "importance": 0.519295
     },
     {
       "feature": "service",
-      "importance": 0.470983
+      "importance": 0.398992
     },
     {
       "feature": "smean",
-      "importance": 0.384107
+      "importance": 0.354454
     },
     {
       "feature": "bytes_ratio",
-      "importance": 0.333772
+      "importance": 0.352331
     },
     {
       "feature": "proto",
-      "importance": 0.319
+      "importance": 0.318414
     },
     {
       "feature": "ct_srv_dst",
-      "importance": 0.265803
+      "importance": 0.251019
     },
     {
       "feature": "ct_dst_src_ltm",
-      "importance": 0.22893
-    },
-    {
-      "feature": "ct_dst_sport_ltm",
-      "importance": 0.227474
-    },
-    {
-      "feature": "conn_density",
-      "importance": 0.226728
-    },
-    {
-      "feature": "byte_per_pkt",
-      "importance": 0.220634
+      "importance": 0.239166
     },
     {
       "feature": "dload",
-      "importance": 0.216182
+      "importance": 0.222246
     },
     {
       "feature": "sloss",
-      "importance": 0.206009
+      "importance": 0.216305
+    },
+    {
+      "feature": "byte_per_pkt",
+      "importance": 0.201466
+    },
+    {
+      "feature": "conn_density",
+      "importance": 0.196843
     },
     {
       "feature": "ct_src_dport_ltm",
-      "importance": 0.203641
+      "importance": 0.1857
+    },
+    {
+      "feature": "ct_dst_sport_ltm",
+      "importance": 0.179065
     },
     {
       "feature": "ct_srv_src",
-      "importance": 0.194416
+      "importance": 0.167266
     },
     {
       "feature": "dmean",
-      "importance": 0.153456
+      "importance": 0.152668
     },
     {
-      "feature": "dbytes",
-      "importance": 0.147376
+      "feature": "ct_dst_ltm",
+      "importance": 0.149976
     },
     {
       "feature": "synack",
-      "importance": 0.137456
+      "importance": 0.146946
     },
     {
-      "feature": "dloss",
-      "importance": 0.127383
+      "feature": "dbytes",
+      "importance": 0.144556
     },
     {
-      "feature": "dtcpb",
-      "importance": 0.120858
+      "feature": "ct_src_ltm",
+      "importance": 0.142855
     }
   ],
   "perClassTopFeatures": {
-    "brute-force": [
+    "backdoor": [
       {
-        "feature": "sttl",
-        "importance": 0.633944
+        "feature": "bytes_ratio",
+        "importance": 0.606822
+      },
+      {
+        "feature": "proto",
+        "importance": 0.468684
+      },
+      {
+        "feature": "dtcpb",
+        "importance": 0.420155
       },
       {
         "feature": "service",
-        "importance": 0.5028
-      },
-      {
-        "feature": "ct_dst_src_ltm",
-        "importance": 0.482766
-      },
-      {
-        "feature": "sbytes",
-        "importance": 0.425779
+        "importance": 0.389125
       },
       {
         "feature": "synack",
-        "importance": 0.327866
+        "importance": 0.34495
       }
     ],
     "ddos": [
       {
         "feature": "ct_srv_dst",
-        "importance": 0.541878
+        "importance": 0.482706
       },
       {
         "feature": "conn_density",
-        "importance": 0.372166
+        "importance": 0.39978
       },
       {
         "feature": "smean",
-        "importance": 0.304998
+        "importance": 0.325206
       },
       {
         "feature": "sttl",
-        "importance": 0.279679
+        "importance": 0.286547
       },
       {
         "feature": "bytes_ratio",
-        "importance": 0.257806
+        "importance": 0.286104
       }
     ],
-    "malware": [
+    "fuzzing": [
       {
-        "feature": "bytes_ratio",
-        "importance": 0.541226
+        "feature": "sttl",
+        "importance": 0.664385
       },
       {
-        "feature": "dtcpb",
-        "importance": 0.37858
-      },
-      {
-        "feature": "ct_srv_src",
-        "importance": 0.334139
-      },
-      {
-        "feature": "sloss",
-        "importance": 0.318682
+        "feature": "sbytes",
+        "importance": 0.592762
       },
       {
         "feature": "service",
-        "importance": 0.305298
+        "importance": 0.500017
+      },
+      {
+        "feature": "ct_src_dport_ltm",
+        "importance": 0.391709
+      },
+      {
+        "feature": "ct_dst_src_ltm",
+        "importance": 0.380454
+      }
+    ],
+    "network-analysis": [
+      {
+        "feature": "dload",
+        "importance": 0.547276
+      },
+      {
+        "feature": "bytes_ratio",
+        "importance": 0.52378
+      },
+      {
+        "feature": "smean",
+        "importance": 0.500071
+      },
+      {
+        "feature": "sloss",
+        "importance": 0.492564
+      },
+      {
+        "feature": "ct_dst_ltm",
+        "importance": 0.380324
       }
     ],
     "normal": [
       {
         "feature": "sttl",
-        "importance": 3.08003
+        "importance": 3.08236
       },
       {
         "feature": "proto",
-        "importance": 1.153643
-      },
-      {
-        "feature": "bytes_ratio",
-        "importance": 0.701489
+        "importance": 1.216224
       },
       {
         "feature": "ct_dst_sport_ltm",
-        "importance": 0.550491
+        "importance": 0.686806
+      },
+      {
+        "feature": "bytes_ratio",
+        "importance": 0.617799
       },
       {
         "feature": "ct_state_ttl",
-        "importance": 0.500502
+        "importance": 0.602874
       }
     ],
     "port-scanning": [
       {
         "feature": "sloss",
-        "importance": 1.039879
+        "importance": 1.043168
       },
       {
         "feature": "smean",
-        "importance": 0.625948
-      },
-      {
-        "feature": "sbytes",
-        "importance": 0.452874
+        "importance": 0.463475
       },
       {
         "feature": "dload",
-        "importance": 0.422414
+        "importance": 0.389112
       },
-      {
-        "feature": "conn_density",
-        "importance": 0.325237
-      }
-    ],
-    "privilege-escalation": [
       {
         "feature": "sbytes",
-        "importance": 1.203925
+        "importance": 0.357133
       },
       {
+        "feature": "bytes_ratio",
+        "importance": 0.310571
+      }
+    ],
+    "shellcode": [
+      {
         "feature": "service",
-        "importance": 1.196986
+        "importance": 1.209527
+      },
+      {
+        "feature": "sbytes",
+        "importance": 0.911421
       },
       {
         "feature": "ct_src_dport_ltm",
-        "importance": 0.903177
+        "importance": 0.893352
       },
       {
         "feature": "sttl",
-        "importance": 0.855251
+        "importance": 0.766896
       },
       {
         "feature": "proto",
-        "importance": 0.614597
+        "importance": 0.593844
       }
     ],
     "unauthorized-access": [
       {
         "feature": "sbytes",
-        "importance": 1.653149
+        "importance": 1.770058
       },
       {
         "feature": "service",
-        "importance": 1.172191
+        "importance": 1.054921
       },
       {
         "feature": "ct_dst_sport_ltm",
-        "importance": 0.882961
+        "importance": 0.705419
       },
       {
         "feature": "smean",
-        "importance": 0.368216
+        "importance": 0.356537
       },
       {
-        "feature": "sttl",
-        "importance": 0.280523
+        "feature": "ct_srv_dst",
+        "importance": 0.34576
       }
     ],
     "vulnerability-exploit": [
       {
         "feature": "smean",
-        "importance": 0.602855
+        "importance": 0.574647
       },
       {
         "feature": "ct_srv_dst",
-        "importance": 0.551303
+        "importance": 0.524706
       },
       {
-        "feature": "dttl",
-        "importance": 0.249794
+        "feature": "dbytes",
+        "importance": 0.270097
       },
       {
         "feature": "sttl",
-        "importance": 0.219903
+        "importance": 0.228109
+      },
+      {
+        "feature": "dttl",
+        "importance": 0.195594
+      }
+    ],
+    "worm": [
+      {
+        "feature": "sbytes",
+        "importance": 0.770705
+      },
+      {
+        "feature": "ct_dst_src_ltm",
+        "importance": 0.345745
+      },
+      {
+        "feature": "service",
+        "importance": 0.255277
       },
       {
         "feature": "conn_density",
-        "importance": 0.197583
+        "importance": 0.253715
+      },
+      {
+        "feature": "sttl",
+        "importance": 0.241277
       }
     ]
   },
   "perClassMetrics": {
-    "brute-force": {
-      "precision": 0.3025,
-      "recall": 0.597,
-      "f1": 0.4015,
-      "support": 6062
+    "backdoor": {
+      "precision": 0.03,
+      "recall": 0.2316,
+      "f1": 0.0532,
+      "support": 583
     },
     "ddos": {
-      "precision": 0.6198,
-      "recall": 0.1208,
-      "f1": 0.2022,
+      "precision": 0.3747,
+      "recall": 0.1949,
+      "f1": 0.2564,
       "support": 4089
     },
-    "malware": {
-      "precision": 0.0192,
-      "recall": 0.1053,
-      "f1": 0.0324,
-      "support": 627
+    "fuzzing": {
+      "precision": 0.2887,
+      "recall": 0.6163,
+      "f1": 0.3932,
+      "support": 6062
+    },
+    "network-analysis": {
+      "precision": 0.0501,
+      "recall": 0.1477,
+      "f1": 0.0748,
+      "support": 677
     },
     "normal": {
-      "precision": 0.9638,
-      "recall": 0.7551,
-      "f1": 0.8468,
+      "precision": 0.9723,
+      "recall": 0.7129,
+      "f1": 0.8227,
       "support": 37000
     },
     "port-scanning": {
-      "precision": 0.6571,
-      "recall": 0.6957,
-      "f1": 0.6758,
-      "support": 4173
+      "precision": 0.914,
+      "recall": 0.8178,
+      "f1": 0.8632,
+      "support": 3496
     },
-    "privilege-escalation": {
-      "precision": 0.4039,
-      "recall": 0.7725,
-      "f1": 0.5304,
+    "shellcode": {
+      "precision": 0.3277,
+      "recall": 0.8757,
+      "f1": 0.4769,
       "support": 378
     },
     "unauthorized-access": {
-      "precision": 0.9961,
-      "recall": 0.973,
-      "f1": 0.9844,
+      "precision": 0.9986,
+      "recall": 0.9719,
+      "f1": 0.985,
       "support": 18871
     },
     "vulnerability-exploit": {
-      "precision": 0.638,
-      "recall": 0.7775,
-      "f1": 0.7009,
+      "precision": 0.7088,
+      "recall": 0.7065,
+      "f1": 0.7077,
       "support": 11132
+    },
+    "worm": {
+      "precision": 0.7381,
+      "recall": 0.7045,
+      "f1": 0.7209,
+      "support": 44
     }
   },
   "attackMap": {
     "Normal": "normal",
     "Generic": "unauthorized-access",
     "Exploits": "vulnerability-exploit",
-    "Fuzzers": "brute-force",
+    "Fuzzers": "fuzzing",
     "DoS": "ddos",
     "Reconnaissance": "port-scanning",
-    "Analysis": "port-scanning",
-    "Backdoor": "malware",
-    "Shellcode": "privilege-escalation",
-    "Worms": "malware"
+    "Analysis": "network-analysis",
+    "Backdoor": "backdoor",
+    "Shellcode": "shellcode",
+    "Worms": "worm"
+  },
+  "mitreMap": {
+    "normal": {
+      "id": "T0000",
+      "technique": "Benign Activity",
+      "tactic": "None"
+    },
+    "ddos": {
+      "id": "T1498",
+      "technique": "Network Denial of Service",
+      "tactic": "Impact"
+    },
+    "port-scanning": {
+      "id": "T1046",
+      "technique": "Network Service Discovery",
+      "tactic": "Discovery"
+    },
+    "fuzzing": {
+      "id": "T1110",
+      "technique": "Brute Force / Fuzzing",
+      "tactic": "Credential Access"
+    },
+    "network-analysis": {
+      "id": "T1040",
+      "technique": "Network Sniffing",
+      "tactic": "Discovery"
+    },
+    "backdoor": {
+      "id": "T1543",
+      "technique": "Create or Modify System Process",
+      "tactic": "Persistence"
+    },
+    "shellcode": {
+      "id": "T1055",
+      "technique": "Process Injection",
+      "tactic": "Defense Evasion"
+    },
+    "unauthorized-access": {
+      "id": "T1078",
+      "technique": "Valid Accounts",
+      "tactic": "Defense Evasion"
+    },
+    "vulnerability-exploit": {
+      "id": "T1203",
+      "technique": "Exploitation for Client Execution",
+      "tactic": "Execution"
+    },
+    "worm": {
+      "id": "T1080",
+      "technique": "Taint Shared Content",
+      "tactic": "Lateral Movement"
+    }
   },
   "improvements": [
-    "log1p transforms for heavy-tailed features",
-    "4 engineered ratio features (bytes_ratio, pkts_ratio, byte_per_pkt, conn_density)",
-    "RF-weighted ensemble [1:2] \u2014 RF empirically best on UNSW-NB15",
-    "XGBoost full 500 trees for maximum individual accuracy",
-    "LightGBM for SHAP explanations (TreeExplainer quality)",
-    "500 trees each, balanced class weights"
+    "Expanded ATTACK_MAP: 10 distinct classes",
+    "ExtraTreesClassifier added to ensemble [XGB x2 + RF x3 + ET x1]",
+    "600/500/500 estimators for XGB/RF/ET",
+    "Anomaly model trained on all normal samples",
+    "log1p transforms + 4 engineered ratio features",
+    "SHAP via LightGBM (TreeExplainer)"
   ],
-  "trainedAt": "2026-05-13T15:53:37.469250",
+  "trainedAt": "2026-05-18T04:00:44.736927",
   "version": "5.0"
 }
