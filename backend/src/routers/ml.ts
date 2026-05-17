@@ -2,7 +2,7 @@ import { z } from "zod";
 import { router, protectedProcedure, publicProcedure } from "./trpc.js";
 import { db } from "../db/index.js";
 import { incidents } from "../db/schema.js";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, isNotNull } from "drizzle-orm";
 import { spawn } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -181,7 +181,7 @@ export const mlRouter = router({
     const labeled = await db
       .select({ rawLog: incidents.rawLog, analystLabel: incidents.analystLabel })
       .from(incidents)
-      .where(eq(incidents.analystLabel, incidents.analystLabel));
+      .where(isNotNull(incidents.analystLabel));
 
     const realLabeled = labeled.filter((r) => r.analystLabel !== null);
 

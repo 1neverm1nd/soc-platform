@@ -8,7 +8,7 @@ import {
 } from "recharts";
 import {
   Brain, Zap, Activity, Target, FlaskConical, CheckCircle2,
-  AlertTriangle, TrendingUp, Info, Play, Loader2
+  AlertTriangle, TrendingUp, Info, Play, Loader2, RotateCcw
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -245,6 +245,18 @@ function LivePredictor() {
 export function MLDashboardPage() {
   const mlStats   = trpc.ml.stats.useQuery();
   const [activeTab, setActiveTab] = useState<"overview" | "matrix" | "shap" | "perclass">("overview");
+  const retrain = trpc.ml.retrain.useMutation({
+    onSuccess: (res) => {
+      const r = res as { success: boolean; message?: string; labeledCount?: number };
+      if (r.success) {
+        toast.success(`Model retrained with ${r.labeledCount ?? 0} labeled incidents`);
+        mlStats.refetch();
+      } else {
+        toast.error(r.message ?? "Retrain failed");
+      }
+    },
+    onError: () => toast.error("Retrain failed"),
+  });
 
   const flow = mlStats.data?.flowModel as {
     modelType?: string; accuracy?: number; f1Weighted?: number; f1Macro?: number;
@@ -300,10 +312,28 @@ export function MLDashboardPage() {
             {flow?.modelType ?? "LightGBM + XGBoost + RandomForest ensemble"} · UNSW-NB15
           </p>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
-          style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.18)" }}>
-          <CheckCircle2 className="w-3.5 h-3.5 text-green-400" />
-          <span className="text-green-400 text-xs">Models Loaded</span>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => retrain.mutate()}
+            disabled={retrain.isPending}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium select-none disabled:opacity-50"
+            style={{ background: "rgba(139,92,246,0.08)", border: "1px solid rgba(139,92,246,0.2)", color: "#c4b5fd", transition: "background-color 120ms" }}
+            onMouseEnter={(e) => { if (!retrain.isPending) e.currentTarget.style.background = "rgba(139,92,246,0.15)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.background = "rgba(139,92,246,0.08)"; }}
+            onMouseDown={(e) => { e.currentTarget.style.transform = "scale(0.97)"; }}
+            onMouseUp={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
+            title="Retrain text model with analyst labels from DB"
+          >
+            {retrain.isPending
+              ? <Loader2 className="w-3 h-3 animate-spin" />
+              : <RotateCcw className="w-3 h-3" />}
+            Retrain
+          </button>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
+            style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.18)" }}>
+            <CheckCircle2 className="w-3.5 h-3.5 text-green-400" />
+            <span className="text-green-400 text-xs">Models Loaded</span>
+          </div>
         </div>
       </div>
 

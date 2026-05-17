@@ -8,7 +8,12 @@ import { BookOpen, Plus, Play, Trash2, ChevronDown, ChevronRight, CheckCircle, C
 import { toast } from "sonner";
 
 const ACTION_TYPES = ["isolate_host", "collect_forensics", "notify_team", "block_ip", "reset_credentials", "scan_network", "patch_vulnerability", "quarantine_file"];
-const ATTACK_TYPES = ["brute-force", "sql-injection", "phishing", "malware", "ddos", "privilege-escalation", "data-exfiltration", "unauthorized-access", "port-scanning", "vulnerability-exploit"];
+const ATTACK_TYPES = [
+  "brute-force", "sql-injection", "phishing", "malware", "ransomware", "ddos",
+  "privilege-escalation", "data-exfiltration", "unauthorized-access", "port-scanning",
+  "vulnerability-exploit", "lateral-movement", "command-and-control", "cryptomining",
+  "backdoor", "shellcode", "worm", "fuzzing", "network-analysis",
+];
 
 const INPUT = "w-full rounded-lg px-3 py-2 text-[var(--text-primary)] text-xs focus:outline-none";
 const INPUT_STYLE = { background: "rgba(255,255,255,0.04)", border: "1px solid var(--border)", transition: "border-color 150ms" };

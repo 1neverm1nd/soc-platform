@@ -7,7 +7,12 @@ import { Spinner } from "@/components/ui/Spinner";
 import { Zap, Plus, Pencil, Trash2, ToggleLeft, ToggleRight, ChevronDown, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
-const ATTACK_TYPES = ["brute-force", "sql-injection", "phishing", "malware", "ddos", "privilege-escalation", "data-exfiltration", "unauthorized-access", "port-scanning", "vulnerability-exploit"];
+const ATTACK_TYPES = [
+  "brute-force", "sql-injection", "phishing", "malware", "ransomware", "ddos",
+  "privilege-escalation", "data-exfiltration", "unauthorized-access", "port-scanning",
+  "vulnerability-exploit", "lateral-movement", "command-and-control", "cryptomining",
+  "backdoor", "shellcode", "worm", "fuzzing", "network-analysis",
+];
 const SEVERITIES   = ["low", "medium", "high", "critical"];
 const ACTION_TYPES = ["block_ip", "notify", "escalate", "update_status", "create_ticket"];
 

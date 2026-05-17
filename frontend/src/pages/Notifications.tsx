@@ -7,11 +7,11 @@ import { fmtDate } from "@/lib/utils";
 import { Bell, CheckCheck, AlertTriangle, ArrowUpCircle, RefreshCw, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
-const TYPE_META: Record<string, { color: string; icon: typeof Bell; accent: string }> = {
-  critical_incident: { color: "#ef4444", icon: AlertTriangle, accent: "rgba(239,68,68,0.08)" },
-  escalation:        { color: "#f97316", icon: ArrowUpCircle, accent: "rgba(249,115,22,0.08)" },
-  status_change:     { color: "#3b82f6", icon: RefreshCw,     accent: "rgba(59,130,246,0.08)" },
-  false_positive:    { color: "#64748b", icon: XCircle,       accent: "rgba(100,116,139,0.08)" },
+const TYPE_META: Record<string, { color: string; icon: typeof Bell; accent: string; label: string }> = {
+  critical_incident: { color: "#ef4444", icon: AlertTriangle, accent: "rgba(239,68,68,0.08)",   label: "Critical" },
+  escalation:        { color: "#f97316", icon: ArrowUpCircle, accent: "rgba(249,115,22,0.08)",   label: "Escalation" },
+  status_change:     { color: "#3b82f6", icon: RefreshCw,     accent: "rgba(59,130,246,0.08)",   label: "Status" },
+  false_positive:    { color: "#64748b", icon: XCircle,       accent: "rgba(100,116,139,0.08)", label: "False Positive" },
 };
 
 const TYPES = ["", "critical_incident", "escalation", "status_change", "false_positive"] as const;
@@ -108,27 +108,41 @@ export function NotificationsPage() {
 
       {/* Filter tabs */}
       <div className="flex gap-0" style={{ borderBottom: "1px solid var(--border)" }}>
-        {TYPES.map((t) => (
-          <button
-            key={t}
-            onClick={() => setFilter(t)}
-            className="px-4 py-2 text-xs font-medium select-none"
-            style={{
-              color: filter === t ? "#3b82f6" : "var(--text-tertiary)",
-              borderBottom: filter === t ? "2px solid #3b82f6" : "2px solid transparent",
-              marginBottom: -1,
-              transition: "color 120ms",
-            }}
-          >
-            {t || "All"}
-          </button>
-        ))}
+        {TYPES.map((t) => {
+          const meta = t ? TYPE_META[t] : null;
+          const label = t ? (TYPE_META[t]?.label ?? t) : "All";
+          return (
+            <button
+              key={t}
+              onClick={() => setFilter(t)}
+              className="px-4 py-2 text-xs font-medium select-none flex items-center gap-1.5"
+              style={{
+                color: filter === t ? "#3b82f6" : "var(--text-tertiary)",
+                borderBottom: filter === t ? "2px solid #3b82f6" : "2px solid transparent",
+                marginBottom: -1,
+                transition: "color 120ms",
+              }}
+            >
+              {meta && <meta.icon className="w-3 h-3" style={{ color: filter === t ? meta.color : "var(--text-tertiary)" }} />}
+              {label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Notifications list */}
       <div className="space-y-2">
-        {(notifs.data ?? []).length === 0 && (
-          <div className="text-center py-12 text-[var(--text-tertiary)] text-xs">No notifications</div>
+        {notifs.isLoading && (
+          <div className="text-center py-12 text-[var(--text-tertiary)] text-xs">Loading…</div>
+        )}
+        {!notifs.isLoading && (notifs.data ?? []).length === 0 && (
+          <div className="py-12 text-center rounded-lg" style={{ border: "1px dashed rgba(255,255,255,0.08)" }}>
+            <Bell className="w-8 h-8 mx-auto mb-2 text-[var(--text-tertiary)] opacity-30" />
+            <div className="text-[var(--text-tertiary)] text-sm">No notifications</div>
+            <div className="text-[var(--text-tertiary)] text-[11px] mt-1 opacity-60">
+              {filter ? "Try selecting a different filter" : "You're all caught up"}
+            </div>
+          </div>
         )}
         {(notifs.data ?? []).map((n) => {
           const meta = TYPE_META[n.type] ?? TYPE_META["status_change"]!;
