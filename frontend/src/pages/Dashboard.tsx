@@ -8,7 +8,7 @@ import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from "recharts";
-import { AlertTriangle, ShieldAlert, Target, Ban, TrendingUp, Activity } from "lucide-react";
+import { AlertTriangle, ShieldAlert, Target, Ban, TrendingUp, Activity, Brain } from "lucide-react";
 import { Link } from "wouter";
 import { toast } from "sonner";
 
@@ -54,6 +54,7 @@ export function DashboardPage() {
   const timeSeries = trpc.incident.timeSeries.useQuery({ days: 30 });
   const campaigns = trpc.campaigns.list.useQuery();
   const blockedCount = trpc.blocklist.count.useQuery();
+  const mlStats = trpc.ml.stats.useQuery(undefined, { staleTime: 60000 });
 
   useEffect(() => {
     const es = new EventSource("/events");
@@ -251,6 +252,39 @@ export function DashboardPage() {
           </div>
         </Card>
       </div>
+
+      {/* ML Status strip */}
+      {mlStats.data && (() => {
+        const fm = mlStats.data.flowModel as { accuracy?: number; classes?: string[]; version?: string } | null;
+        const tm = mlStats.data.textModel as { accuracy?: number; training_samples?: number } | null;
+        const avail = mlStats.data.modelsAvailable as { flow?: boolean; text?: boolean; anomaly?: boolean } | null;
+        return (
+          <div
+            className="flex items-center gap-4 px-4 py-2.5 rounded-lg"
+            style={{ background: "rgba(37,99,235,0.04)", border: "1px solid rgba(37,99,235,0.1)" }}
+          >
+            <Link href="/ml">
+              <div className="flex items-center gap-1.5 cursor-pointer">
+                <Brain className="w-3.5 h-3.5 text-blue-400" />
+                <span className="text-blue-400 text-xs font-medium">ML Engine</span>
+              </div>
+            </Link>
+            <div className="w-px h-3 bg-white/10" />
+            {[
+              { label: "Flow Model", value: fm?.accuracy ? `${(fm.accuracy * 100).toFixed(1)}%` : "—", ok: avail?.flow },
+              { label: "Text Model", value: tm?.accuracy ? `${(tm.accuracy * 100).toFixed(1)}%` : "—", ok: avail?.text },
+              { label: "Anomaly",    value: avail?.anomaly ? "Active" : "N/A",  ok: avail?.anomaly },
+              { label: "Classes",    value: String(fm?.classes?.length ?? "—"),  ok: true },
+            ].map(({ label, value, ok }) => (
+              <div key={label} className="flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full" style={{ background: ok ? "#22c55e" : "#ef4444" }} />
+                <span className="text-[var(--text-tertiary)] text-[11px]">{label}:</span>
+                <span className="text-[var(--text-secondary)] text-[11px] font-medium tabular">{value}</span>
+              </div>
+            ))}
+          </div>
+        );
+      })()}
 
       {/* Quick nav — Emil: subtle, functional, no gradient decorations */}
       <div className="grid grid-cols-4 gap-2">
