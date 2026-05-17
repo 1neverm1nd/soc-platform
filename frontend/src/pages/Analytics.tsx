@@ -9,16 +9,25 @@ import {
 import { Brain, Target } from "lucide-react";
 
 const MITRE_MAP: Record<string, { id: string; technique: string; tactic: string }> = {
-  "brute-force":          { id: "T1110", technique: "Brute Force",            tactic: "Credential Access" },
-  "sql-injection":        { id: "T1190", technique: "Exploit Public-Facing",  tactic: "Initial Access" },
-  "phishing":             { id: "T1566", technique: "Phishing",               tactic: "Initial Access" },
-  "malware":              { id: "T1204", technique: "User Execution",          tactic: "Execution" },
-  "ddos":                 { id: "T1498", technique: "Network DoS",             tactic: "Impact" },
-  "data-exfiltration":    { id: "T1041", technique: "Exfil Over C2",          tactic: "Exfiltration" },
-  "privilege-escalation": { id: "T1068", technique: "Exploit for PE",          tactic: "Privilege Escalation" },
-  "unauthorized-access":  { id: "T1078", technique: "Valid Accounts",          tactic: "Defense Evasion" },
-  "port-scanning":        { id: "T1046", technique: "Network Service Scan",    tactic: "Discovery" },
-  "vulnerability-exploit":{ id: "T1203", technique: "Exploit for Execution",   tactic: "Execution" },
+  "brute-force":           { id: "T1110", technique: "Brute Force",            tactic: "Credential Access" },
+  "sql-injection":         { id: "T1190", technique: "Exploit Public-Facing",  tactic: "Initial Access" },
+  "phishing":              { id: "T1566", technique: "Phishing",               tactic: "Initial Access" },
+  "malware":               { id: "T1204", technique: "User Execution",         tactic: "Execution" },
+  "ransomware":            { id: "T1486", technique: "Data Encrypted",         tactic: "Impact" },
+  "ddos":                  { id: "T1498", technique: "Network DoS",            tactic: "Impact" },
+  "data-exfiltration":     { id: "T1041", technique: "Exfil Over C2",         tactic: "Exfiltration" },
+  "privilege-escalation":  { id: "T1068", technique: "Exploit for PE",         tactic: "Privilege Escalation" },
+  "unauthorized-access":   { id: "T1078", technique: "Valid Accounts",         tactic: "Defense Evasion" },
+  "port-scanning":         { id: "T1046", technique: "Network Service Scan",   tactic: "Discovery" },
+  "network-analysis":      { id: "T1040", technique: "Network Sniffing",       tactic: "Discovery" },
+  "vulnerability-exploit": { id: "T1203", technique: "Exploit for Execution",  tactic: "Execution" },
+  "lateral-movement":      { id: "T1021", technique: "Remote Services",        tactic: "Lateral Movement" },
+  "command-and-control":   { id: "T1071", technique: "App Layer Protocol",     tactic: "Command & Control" },
+  "cryptomining":          { id: "T1496", technique: "Resource Hijacking",     tactic: "Impact" },
+  "backdoor":              { id: "T1543", technique: "Create/Modify Svc",      tactic: "Persistence" },
+  "shellcode":             { id: "T1055", technique: "Process Injection",       tactic: "Defense Evasion" },
+  "worm":                  { id: "T1080", technique: "Taint Shared Content",   tactic: "Lateral Movement" },
+  "fuzzing":               { id: "T1110", technique: "Brute Force / Fuzzing",  tactic: "Credential Access" },
 };
 
 const TT = {

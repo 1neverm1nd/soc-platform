@@ -249,11 +249,29 @@ def predict_text(text: str) -> dict:
     if model is None:
         return _regex_fallback(text)
 
-    classes = model.classes_
-    proba   = model.predict_proba([text])[0]
-    top_idx = int(np.argmax(proba))
-    pred_cls = str(classes[top_idx])
+    classes    = model.classes_
+    proba      = model.predict_proba([text])[0]
+    top_idx    = int(np.argmax(proba))
+    pred_cls   = str(classes[top_idx])
     confidence = float(proba[top_idx])
+
+    # ── Confidence threshold: low confidence on ANY class → normal/benign ─────
+    # When a log has no attack indicators the model spreads probability evenly.
+    # If even the top class can't reach the threshold, treat it as normal traffic.
+    if confidence < CONFIDENCE_THRESHOLD and pred_cls != "normal":
+        # Check if "normal" class exists in model
+        if "normal" in classes:
+            normal_idx = list(classes).index("normal")
+            normal_conf = float(proba[normal_idx])
+            # Use normal if it's competitive OR top confidence is too low
+            if normal_conf > 0.15 or confidence < 0.30:
+                pred_cls   = "normal"
+                confidence = max(normal_conf, 0.50 - confidence)  # calibrate
+        else:
+            # Model has no normal class — apply regex check as secondary filter
+            regex_result = _regex_fallback(text)
+            if regex_result["type"] == "normal":
+                return regex_result
 
     alternatives = [
         {"type": str(classes[i]), "confidence": round(float(proba[i]), 4)}
@@ -272,26 +290,45 @@ def predict_text(text: str) -> dict:
     }
 
 
+# If text model confidence < this threshold → classify as "normal" (benign)
+CONFIDENCE_THRESHOLD = 0.38
+
 REGEX_FALLBACK = [
-    (r"brute.?force|password.?attempt|failed.?login|auth.?fail", "brute-force"),
-    (r"sql.?inject|union.?select|1=1|drop.?table|xp_cmd",        "sql-injection"),
-    (r"phish|spear|credential.?harvest|fake.?login",             "phishing"),
-    (r"malware|trojan|ransomware|backdoor|c2.?connect",          "malware"),
-    (r"ddos|flood|syn.?flood|amplif|botnet",                     "ddos"),
-    (r"exfil|data.?leak|loot|exporting.?data",                   "data-exfiltration"),
-    (r"priv.?esc|sudo.?exploit|privilege|escalat",               "privilege-escalation"),
-    (r"unauthorized|invalid.?cred|access.?denied.+attempt",      "unauthorized-access"),
-    (r"port.?scan|nmap|masscan|service.?discovery",              "port-scanning"),
-    (r"cve-|exploit|vuln|remote.?code.?exec|rce",                "vulnerability-exploit"),
+    # Normal/benign patterns — checked FIRST
+    (r"INFO:|DEBUG:|heartbeat|health.?check|backup.?complet|certif.?renew|"
+     r"logged.?in.?success|session.?closed|update.?install|sync.?success|"
+     r"queue.?empty|cache.?hit|load.?balanc|metrics.?collect",              "normal"),
+    # Attack patterns
+    (r"brute.?force|password.?attempt|failed.?login|auth.?fail|credential.?stuff", "brute-force"),
+    (r"sql.?inject|union.?select|1=1|drop.?table|xp_cmd|sqlmap",           "sql-injection"),
+    (r"phish|spear|credential.?harvest|fake.?login|homograph|vishing",      "phishing"),
+    (r"ransomware|encrypt.?file|ransom.?note|shadow.?cop|lockbit|ryuk",     "ransomware"),
+    (r"malware|trojan|rootkit|keylogger|spyware|fileless",                  "malware"),
+    (r"c2.?beacon|command.?control|cobalt.?strike|meterpreter|empire.?ps",  "command-and-control"),
+    (r"lateral.?move|pass.?hash|pass.?ticket|psexec|dcsync|wmi.?exec",     "lateral-movement"),
+    (r"cryptomin|xmrig|mining.?pool|stratum|monero|coinhive",              "cryptomining"),
+    (r"ddos|flood|syn.?flood|amplif|botnet|slowloris",                      "ddos"),
+    (r"exfil|data.?leak|loot|exporting.?data|dns.?tunnel",                 "data-exfiltration"),
+    (r"priv.?esc|sudo.?exploit|privilege|escalat|uac.?bypass|token.?imper", "privilege-escalation"),
+    (r"unauthorized|invalid.?cred|access.?denied.+attempt|impossible.?trav","unauthorized-access"),
+    (r"port.?scan|nmap|masscan|service.?discovery|shodan",                  "port-scanning"),
+    (r"network.?analy|traffic.?analy|packet.?captur|wireshark",             "network-analysis"),
+    (r"backdoor|persist|beacon|c2.?connect|reverse.?shell",                 "backdoor"),
+    (r"shellcode|heap.?spray|rop.?chain|nop.?sled",                        "shellcode"),
+    (r"worm.?propagat|self.?replic|infect.?host|spread.?via.?smb",         "worm"),
+    (r"fuzz|fuzz.?input|mutate.?payload|random.?input",                    "fuzzing"),
+    (r"cve-|exploit|vuln|remote.?code.?exec|rce|log4shell|eternal.?blue",  "vulnerability-exploit"),
 ]
 
 def _regex_fallback(text: str) -> dict:
     import re
     for pattern, attack_type in REGEX_FALLBACK:
         if re.search(pattern, text, re.IGNORECASE):
-            return {"type": attack_type, "confidence": 0.65, "alternatives": [],
+            conf = 0.55 if attack_type == "normal" else 0.65
+            return {"type": attack_type, "confidence": conf, "alternatives": [],
                     "explanation": [], "anomalyScore": None, "isAnomaly": False, "mode": "regex"}
-    return {"type": "unauthorized-access", "confidence": 0.5, "alternatives": [],
+    # Default: normal/benign — no attack indicators found
+    return {"type": "normal", "confidence": 0.45, "alternatives": [],
             "explanation": [], "anomalyScore": None, "isAnomaly": False, "mode": "regex"}
 
 

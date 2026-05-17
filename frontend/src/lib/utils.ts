@@ -24,16 +24,26 @@ export function severityDot(severity: string): string {
 
 export function typeIcon(type: string): string {
   const map: Record<string, string> = {
-    "brute-force": "🔑",
-    "sql-injection": "💉",
-    "phishing": "🎣",
-    "malware": "🦠",
-    "ddos": "🌊",
-    "data-exfiltration": "📤",
-    "privilege-escalation": "⬆️",
-    "unauthorized-access": "🚪",
-    "port-scanning": "🔍",
+    "normal":                "✅",
+    "brute-force":           "🔑",
+    "sql-injection":         "💉",
+    "phishing":              "🎣",
+    "malware":               "🦠",
+    "ransomware":            "🔒",
+    "ddos":                  "🌊",
+    "data-exfiltration":     "📤",
+    "privilege-escalation":  "⬆️",
+    "unauthorized-access":   "🚪",
+    "port-scanning":         "🔍",
+    "network-analysis":      "📡",
     "vulnerability-exploit": "💥",
+    "lateral-movement":      "↔️",
+    "command-and-control":   "📡",
+    "cryptomining":          "⛏️",
+    "backdoor":              "🚪",
+    "shellcode":             "⚙️",
+    "worm":                  "🪱",
+    "fuzzing":               "🎲",
   };
   return map[type] ?? "⚠️";
 }
@@ -55,14 +65,26 @@ export function confidenceColor(v: number): string {
 }
 
 export const ATTACK_COLORS: Record<string, string> = {
-  "brute-force": "#f97316",
-  "sql-injection": "#8b5cf6",
-  "phishing": "#ec4899",
-  "malware": "#ef4444",
-  "ddos": "#3b82f6",
-  "data-exfiltration": "#f59e0b",
-  "privilege-escalation": "#10b981",
-  "unauthorized-access": "#6366f1",
-  "port-scanning": "#14b8a6",
+  // original
+  "brute-force":           "#f97316",
+  "sql-injection":         "#8b5cf6",
+  "phishing":              "#ec4899",
+  "malware":               "#ef4444",
+  "ddos":                  "#3b82f6",
+  "data-exfiltration":     "#f59e0b",
+  "privilege-escalation":  "#10b981",
+  "unauthorized-access":   "#6366f1",
+  "port-scanning":         "#14b8a6",
   "vulnerability-exploit": "#e11d48",
+  // new classes
+  "normal":                "#22c55e",
+  "ransomware":            "#dc2626",
+  "lateral-movement":      "#0ea5e9",
+  "command-and-control":   "#7c3aed",
+  "cryptomining":          "#d97706",
+  "backdoor":              "#9f1239",
+  "shellcode":             "#7e22ce",
+  "worm":                  "#b45309",
+  "fuzzing":               "#0d9488",
+  "network-analysis":      "#0891b2",
 };

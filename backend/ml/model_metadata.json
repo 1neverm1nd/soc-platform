@@ -3,19 +3,24 @@
   "cv_accuracy": 1.0,
   "cv_std": 0.0,
   "model_type": "VotingClassifier(LinearSVC+LogisticRegression)",
-  "training_samples": 3000,
+  "training_samples": 9000,
   "classes": [
     "brute-force",
+    "command-and-control",
+    "cryptomining",
     "data-exfiltration",
     "ddos",
+    "lateral-movement",
     "malware",
+    "normal",
     "phishing",
     "port-scanning",
     "privilege-escalation",
+    "ransomware",
     "sql-injection",
     "unauthorized-access",
     "vulnerability-exploit"
   ],
-  "trained_at": "2026-05-13T10:36:09.808751",
+  "trained_at": "2026-05-18T03:32:42.013151",
   "features": "TF-IDF word(1-3) 8k + char_wb(3-5) 4k = 12k features"
 }
