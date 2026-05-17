@@ -39,6 +39,10 @@ export const incidents = mysqlTable("incidents", {
   index("idx_status").on(t.status),
   index("idx_severity").on(t.severity),
   index("idx_created_at").on(t.createdAt),
+  index("idx_ml_type").on(t.mlType),
+  index("idx_analyst_label").on(t.analystLabel),
+  index("idx_status_severity").on(t.status, t.severity),
+  index("idx_threat_country").on(t.threatCountry),
 ]);
 
 export const blockedIps = mysqlTable("blocked_ips", {
@@ -109,7 +113,10 @@ export const notifications = mysqlTable("notifications", {
   incidentId: int("incident_id"),
   isRead: boolean("is_read").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (t) => [
+  index("idx_notif_user_read").on(t.userId, t.isRead),
+  index("idx_notif_created").on(t.createdAt),
+]);
 
 export const notificationTemplates = mysqlTable("notification_templates", {
   id: int("id").primaryKey().autoincrement(),
