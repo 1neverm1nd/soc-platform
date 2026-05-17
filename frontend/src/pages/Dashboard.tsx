@@ -8,7 +8,7 @@ import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from "recharts";
-import { AlertTriangle, ShieldAlert, Target, Ban, TrendingUp, Activity, Brain } from "lucide-react";
+import { AlertTriangle, ShieldAlert, Target, Ban, TrendingUp, Activity, Brain, Calendar } from "lucide-react";
 import { Link } from "wouter";
 import { toast } from "sonner";
 
@@ -67,11 +67,12 @@ export function DashboardPage() {
     return () => es.close();
   }, [qc]);
 
+  const weekChange = stats.data?.weekOverWeekChange;
   const kpiCards = [
-    { label: "Total Incidents", value: stats.data?.total ?? 0, icon: AlertTriangle, color: "#e2e8f0", glow: undefined },
-    { label: "Critical", value: stats.data?.critical ?? 0, icon: ShieldAlert, color: "#ef4444", glow: "red" as const },
-    { label: "Active Campaigns", value: campaigns.data?.length ?? 0, icon: Target, color: "#f97316", glow: "yellow" as const },
-    { label: "Blocked IPs", value: blockedCount.data?.count ?? 0, icon: Ban, color: "#22c55e", glow: "green" as const },
+    { label: "Total Incidents", value: stats.data?.total ?? 0, icon: AlertTriangle, color: "#e2e8f0", glow: undefined, sub: undefined },
+    { label: "Critical", value: stats.data?.critical ?? 0, icon: ShieldAlert, color: "#ef4444", glow: "red" as const, sub: undefined },
+    { label: "Today", value: stats.data?.today ?? 0, icon: Calendar, color: "#3b82f6", glow: undefined, sub: weekChange !== null && weekChange !== undefined ? `${weekChange >= 0 ? "+" : ""}${weekChange}% vs last week` : undefined },
+    { label: "Blocked IPs", value: blockedCount.data?.count ?? 0, icon: Ban, color: "#22c55e", glow: "green" as const, sub: undefined },
   ];
 
   const typeData = (stats.data?.byType ?? []).map((r) => ({
@@ -108,7 +109,7 @@ export function DashboardPage() {
 
       {/* KPI Cards — stagger via CSS, Emil prefers CSS over JS for this */}
       <div className="grid grid-cols-4 gap-3">
-        {kpiCards.map(({ label, value, icon: Icon, color, glow }, i) => (
+        {kpiCards.map(({ label, value, icon: Icon, color, glow, sub }, i) => (
           <div key={label} className="stagger-item" style={{ animationDelay: `${i * 50}ms` }}>
             <Card glow={glow} className="relative">
               <div className="flex items-start justify-between">
@@ -119,6 +120,11 @@ export function DashboardPage() {
                   <p className="text-2xl font-semibold tabular" style={{ color }}>
                     <AnimatedCounter target={value} />
                   </p>
+                  {sub && (
+                    <p className="text-[10px] mt-1" style={{ color: sub.startsWith("+") ? "#22c55e" : sub.startsWith("-") ? "#ef4444" : "var(--text-tertiary)" }}>
+                      {sub}
+                    </p>
+                  )}
                 </div>
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center"

@@ -221,17 +221,28 @@ export const incidentsRouter = router({
   }),
 
   stats: protectedProcedure.query(async () => {
-    const [total, critical, open, bySeverity, byType] = await Promise.all([
+    const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
+    const weekAgo    = new Date(Date.now() - 7 * 24 * 3600 * 1000);
+    const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 3600 * 1000);
+    const [total, critical, open, bySeverity, byType, today, thisWeek, lastWeek] = await Promise.all([
       db.select({ count: count() }).from(incidents),
       db.select({ count: count() }).from(incidents).where(eq(incidents.severity, "critical")),
       db.select({ count: count() }).from(incidents).where(inArray(incidents.status, ["open", "investigating"])),
       db.select({ severity: incidents.severity, count: count() }).from(incidents).groupBy(incidents.severity),
       db.select({ mlType: incidents.mlType, count: count() }).from(incidents).groupBy(incidents.mlType).orderBy(desc(count())).limit(10),
+      db.select({ count: count() }).from(incidents).where(gte(incidents.createdAt, todayStart)),
+      db.select({ count: count() }).from(incidents).where(gte(incidents.createdAt, weekAgo)),
+      db.select({ count: count() }).from(incidents).where(and(gte(incidents.createdAt, twoWeeksAgo), lte(incidents.createdAt, weekAgo))),
     ]);
+    const thisWeekN = Number(thisWeek[0]?.count ?? 0);
+    const lastWeekN = Number(lastWeek[0]?.count ?? 0);
     return {
       total: Number(total[0]?.count ?? 0),
       critical: Number(critical[0]?.count ?? 0),
       open: Number(open[0]?.count ?? 0),
+      today: Number(today[0]?.count ?? 0),
+      thisWeek: thisWeekN,
+      weekOverWeekChange: lastWeekN > 0 ? Math.round(((thisWeekN - lastWeekN) / lastWeekN) * 100) : null,
       bySeverity,
       byType,
     };
