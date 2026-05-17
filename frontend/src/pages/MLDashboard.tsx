@@ -243,7 +243,8 @@ function LivePredictor() {
 }
 
 export function MLDashboardPage() {
-  const mlStats   = trpc.ml.stats.useQuery();
+  const mlStats      = trpc.ml.stats.useQuery(undefined, { staleTime: 60_000 });
+  const agreeRate    = trpc.incident.mlAgreementRate.useQuery(undefined, { staleTime: 120_000 });
   const [activeTab, setActiveTab] = useState<"overview" | "matrix" | "shap" | "perclass">("overview");
   const retrain = trpc.ml.retrain.useMutation({
     onSuccess: (res) => {
@@ -343,7 +344,7 @@ export function MLDashboardPage() {
           { label: "Flow Accuracy",     value: flow?.accuracy   ? `${(flow.accuracy   * 100).toFixed(1)}%` : "—", color: "#3b82f6" },
           { label: "F1 Weighted",       value: flow?.f1Weighted ? `${(flow.f1Weighted * 100).toFixed(1)}%` : "—", color: "#8b5cf6" },
           { label: "Text Accuracy",     value: text?.accuracy   ? `${(text.accuracy   * 100).toFixed(1)}%` : "—", color: "#22c55e" },
-          { label: "Training Samples",  value: flow?.trainSamples ? `${(flow.trainSamples / 1000).toFixed(0)}K` : "—", color: "#f97316" },
+          { label: "ML↔Analyst Agree",  value: agreeRate.data?.rate !== null && agreeRate.data?.rate !== undefined ? `${agreeRate.data.rate}%` : "—", color: agreeRate.data?.rate !== null && agreeRate.data?.rate !== undefined && agreeRate.data.rate >= 80 ? "#22c55e" : "#f97316" },
         ].map(({ label, value, color }, i) => (
           <div key={i} className="stagger-item" style={{ animationDelay: `${i * 40}ms` }}>
             <Card>

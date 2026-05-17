@@ -46,6 +46,8 @@ export function AnalyticsPage() {
   const stats      = trpc.incident.stats.useQuery();
   const heatmap    = trpc.incident.heatmap.useQuery();
 
+  const weekChange = stats.data?.weekOverWeekChange;
+
   const areaData = (timeSeries.data ?? []).map((r) => ({
     date: r.date?.slice(5),
     incidents: Number(r.count),
@@ -91,6 +93,25 @@ export function AnalyticsPage() {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Quick stats */}
+      <div className="grid grid-cols-4 gap-3">
+        {[
+          { label: "Total",     value: stats.data?.total ?? 0,    color: "var(--text-primary)" },
+          { label: "This Week", value: stats.data?.thisWeek ?? 0, color: "#3b82f6",
+            sub: weekChange !== null && weekChange !== undefined ? `${weekChange >= 0 ? "+" : ""}${weekChange}% vs prev week` : undefined },
+          { label: "Critical",  value: stats.data?.critical ?? 0, color: "#ef4444" },
+          { label: "Open",      value: stats.data?.open ?? 0,     color: "#f97316" },
+        ].map(({ label, value, color, sub }) => (
+          <div key={label} className="rounded-lg px-4 py-3" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+            <div className="text-[var(--text-tertiary)] text-[11px] uppercase tracking-wider mb-1">{label}</div>
+            <div className="text-xl font-semibold tabular" style={{ color }}>{value.toLocaleString()}</div>
+            {sub && (
+              <div className="text-[10px] mt-0.5" style={{ color: sub.startsWith("+") ? "#22c55e" : "#ef4444" }}>{sub}</div>
+            )}
+          </div>
+        ))}
       </div>
 
       {/* Timeline */}
