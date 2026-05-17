@@ -227,7 +227,7 @@ def main():
         "log_features": LOG_FEATURES,
         "version": "5.0",
     }, MODEL_PATH)
-    print(f"  Model saved → {MODEL_PATH}")
+    print(f"  Model saved -> {MODEL_PATH}")
 
     cm = confusion_matrix(y_te, y_pred)
     with open(CM_PATH, "w") as f:
@@ -309,7 +309,7 @@ def main():
         "attackMap":    ATTACK_MAP,
         "mitreMap":     MITRE_MAP,
         "improvements": [
-            "Expanded ATTACK_MAP: 10 distinct classes (Worms→worm, Backdoor→backdoor, etc.)",
+            "Expanded ATTACK_MAP: 10 distinct classes (Worms->worm, Backdoor->backdoor, etc.)",
             "ExtraTreesClassifier added to ensemble [XGB×2 + RF×3 + ET×1]",
             "600/500/500 estimators for XGB/RF/ET",
             "Anomaly model trained on all normal samples (no 50k cap)",

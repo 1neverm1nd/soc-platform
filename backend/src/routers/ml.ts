@@ -105,7 +105,7 @@ export const mlRouter = router({
       let country = input.threatCountry ?? null;
 
       const severity = calcSeverity(mlResult.type, mlResult.confidence, abuseScore);
-      const mitre = MITRE_MAP[mlResult.type] ?? MITRE_MAP["unauthorized-access"]!;
+      const mitre = MITRE_MAP[mlResult.type] ?? MITRE_MAP["normal"]!;
 
       const [result] = await db.insert(incidents).values({
         rawLog:        input.rawLog,
@@ -231,10 +231,20 @@ export const mlRouter = router({
 });
 
 function calcSeverity(type: string, confidence: number, abuseScore: number): "low" | "medium" | "high" | "critical" {
-  const criticalTypes = new Set(["malware", "data-exfiltration", "privilege-escalation", "vulnerability-exploit"]);
-  const highTypes     = new Set(["sql-injection", "phishing", "brute-force", "ddos"]);
+  const criticalTypes = new Set([
+    "malware", "data-exfiltration", "privilege-escalation", "vulnerability-exploit",
+    "ransomware", "shellcode", "backdoor",
+  ]);
+  const highTypes = new Set([
+    "sql-injection", "phishing", "brute-force", "ddos",
+    "lateral-movement", "command-and-control", "worm",
+  ]);
+  const mediumTypes = new Set([
+    "unauthorized-access", "port-scanning", "network-analysis", "fuzzing", "cryptomining",
+  ]);
+  if (type === "normal") return "low";
   if (criticalTypes.has(type) && confidence > 0.8) return "critical";
   if (criticalTypes.has(type) || (highTypes.has(type) && confidence > 0.75) || abuseScore > 80) return "high";
-  if (highTypes.has(type) || abuseScore > 50) return "medium";
+  if (highTypes.has(type) || mediumTypes.has(type) || abuseScore > 50) return "medium";
   return "low";
 }

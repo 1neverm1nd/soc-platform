@@ -389,7 +389,7 @@ def predict_hybrid(text: str, features: dict) -> dict:
 def main():
     raw = sys.stdin.buffer.read().decode("utf-8-sig").strip()  # utf-8-sig handles BOM from PowerShell
     if not raw:
-        print(json.dumps({"type": "unauthorized-access", "confidence": 0.5,
+        print(json.dumps({"type": "normal", "confidence": 0.6,
                           "alternatives": [], "explanation": [], "mode": "fallback"}))
         return
 

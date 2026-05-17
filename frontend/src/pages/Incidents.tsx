@@ -15,7 +15,14 @@ import { toast } from "sonner";
 
 const STATUSES = ["", "open", "investigating", "resolved", "false_positive"] as const;
 const SEVERITIES = ["", "critical", "high", "medium", "low"] as const;
-const TYPES = ["", "brute-force", "sql-injection", "phishing", "malware", "ddos", "privilege-escalation", "data-exfiltration", "unauthorized-access", "port-scanning", "vulnerability-exploit"];
+const TYPES = [
+  "", "normal",
+  "brute-force", "sql-injection", "phishing", "malware", "ransomware",
+  "ddos", "data-exfiltration", "privilege-escalation", "unauthorized-access",
+  "port-scanning", "vulnerability-exploit", "lateral-movement",
+  "command-and-control", "cryptomining", "backdoor", "shellcode",
+  "worm", "fuzzing", "network-analysis",
+];
 
 interface Incident {
   id: number;
