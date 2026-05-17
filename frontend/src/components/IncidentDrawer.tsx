@@ -245,10 +245,16 @@ export function IncidentDrawer({ incident, onClose }: Props) {
   const qc = useQueryClient();
   const [analyzing, setAnalyzing] = useState(false);
   const [activeTab, setActiveTab] = useState<"overview" | "ml" | "mitre" | "related">("overview");
+  const [notes, setNotes] = useState<string>("");
 
   const analyzeInc = trpc.incident.analyze.useMutation({
     onSuccess: () => { qc.invalidateQueries(); toast.success("Analysis complete"); },
     onError: () => toast.error("Analysis failed"),
+  });
+
+  const updateStatus = trpc.incident.updateStatus.useMutation({
+    onSuccess: () => { qc.invalidateQueries(); toast.success("Notes saved"); },
+    onError: () => toast.error("Failed to save notes"),
   });
 
   const feedbackMut = trpc.incident.feedback.useMutation({
@@ -465,6 +471,38 @@ export function IncidentDrawer({ incident, onClose }: Props) {
                     >
                       {incident.rawLog}
                     </pre>
+                  </div>
+
+                  {/* Analyst Notes */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] font-semibold text-[var(--text-tertiary)] uppercase tracking-wider">Analyst Notes</span>
+                      <button
+                        onClick={() => updateStatus.mutate({ id: incident.id, status: incident.status as "open" | "investigating" | "resolved" | "false_positive", notes: notes || undefined })}
+                        disabled={updateStatus.isPending}
+                        className="text-[10px] px-2 py-1 rounded disabled:opacity-50"
+                        style={{ background: "rgba(37,99,235,0.1)", border: "1px solid rgba(37,99,235,0.2)", color: "#60a5fa", transition: "background-color 120ms" }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = "rgba(37,99,235,0.18)"}
+                        onMouseLeave={(e) => e.currentTarget.style.background = "rgba(37,99,235,0.1)"}
+                      >
+                        Save
+                      </button>
+                    </div>
+                    <textarea
+                      value={notes || incident.analystNotes || ""}
+                      onChange={(e) => setNotes(e.target.value)}
+                      placeholder="Add analyst notes, observations, or findings…"
+                      rows={3}
+                      className="w-full rounded-lg px-3 py-2 text-xs resize-none focus:outline-none"
+                      style={{
+                        background: "rgba(255,255,255,0.03)",
+                        border: "1px solid var(--border)",
+                        color: "var(--text-primary)",
+                        transition: "border-color 150ms",
+                      }}
+                      onFocus={(e) => e.currentTarget.style.borderColor = "rgba(37,99,235,0.4)"}
+                      onBlur={(e) => e.currentTarget.style.borderColor = "var(--border)"}
+                    />
                   </div>
 
                   {/* AI Analysis */}
