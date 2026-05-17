@@ -4,7 +4,7 @@ import { clearAuth, getStoredUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import {
   Shield, LayoutDashboard, AlertTriangle, BarChart3, Globe,
-  Network, Zap, BookOpen, Bell, LogOut, User, Brain
+  Network, Zap, BookOpen, Bell, LogOut, User, Brain, ShieldOff
 } from "lucide-react";
 
 const NAV = [
@@ -17,6 +17,7 @@ const NAV = [
   { href: "/rules", icon: Zap, label: "Rules" },
   { href: "/playbooks", icon: BookOpen, label: "Playbooks" },
   { href: "/notifications", icon: Bell, label: "Notifications" },
+  { href: "/blocklist", icon: ShieldOff, label: "Blocklist" },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {

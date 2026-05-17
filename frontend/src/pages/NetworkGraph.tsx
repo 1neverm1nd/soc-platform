@@ -57,15 +57,15 @@ export function NetworkGraphPage() {
   const nodeMap = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes]);
   const SEV_COLORS: Record<string, string> = { critical: "#ef4444", high: "#f97316", medium: "#eab308", low: "#22c55e" };
 
-  if (data.isLoading) return <div className="p-6 text-white/40">Loading network graph...</div>;
+  if (data.isLoading) return <div className="p-6 text-[var(--text-tertiary)] text-sm">Loading network graph...</div>;
 
   return (
     <div className="p-6 space-y-4">
       <div className="flex items-center gap-3">
-        <Network className="w-6 h-6 text-purple-400" />
+        <Network className="w-5 h-5 text-purple-400" />
         <div>
-          <h1 className="text-2xl font-bold text-white">Network Graph</h1>
-          <p className="text-white/40 text-sm">Source → Destination IP relationships ({nodes.length} nodes, {edges.length} edges)</p>
+          <h1 className="text-lg font-semibold text-[var(--text-primary)]">Network Graph</h1>
+          <p className="text-[var(--text-tertiary)] text-xs mt-0.5">Source to Destination IP relationships ({nodes.length} nodes, {edges.length} edges)</p>
         </div>
       </div>
 
@@ -122,9 +122,9 @@ export function NetworkGraphPage() {
       </Card>
 
       <div className="flex gap-6">
-        <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-red-500" /><span className="text-white/50 text-xs">Source (attacker)</span></div>
-        <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-blue-500" /><span className="text-white/50 text-xs">Destination (target)</span></div>
-        <div className="flex items-center gap-2 ml-auto text-white/30 text-xs">Hover over a node to highlight its connections</div>
+        <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-red-500" /><span className="text-[var(--text-tertiary)] text-xs">Source (attacker)</span></div>
+        <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-blue-500" /><span className="text-[var(--text-tertiary)] text-xs">Destination (target)</span></div>
+        <div className="flex items-center gap-2 ml-auto text-[var(--text-tertiary)] text-xs">Hover over a node to highlight its connections</div>
       </div>
     </div>
   );

@@ -134,11 +134,17 @@ export function IncidentsPage() {
       <Card className="p-3">
         <div className="flex gap-3 flex-wrap">
           <div className="relative flex-1 min-w-48">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--text-tertiary)]" />
             <input
               value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               placeholder="Search logs..."
-              className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-3 py-2 text-white text-sm placeholder-white/30 focus:outline-none focus:border-blue-500/40"
+              style={{
+                background: "rgba(255,255,255,0.04)", border: "1px solid var(--border)",
+                borderRadius: "6px", paddingLeft: "32px", paddingRight: "12px", paddingTop: "7px", paddingBottom: "7px",
+                color: "var(--text-primary)", fontSize: "12px", outline: "none", width: "100%",
+              }}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "rgba(37,99,235,0.5)"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "var(--border)"; }}
             />
           </div>
           {[
@@ -147,9 +153,12 @@ export function IncidentsPage() {
             { label: "Type", value: mlType, setter: setMlType, options: TYPES },
           ].map(({ label, value, setter, options }) => (
             <select key={label} value={value} onChange={(e) => { setter(e.target.value); setPage(1); }}
-              className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/40">
-              <option value="" className="bg-gray-900">{label}</option>
-              {options.filter(Boolean).map((o) => <option key={o} value={o} className="bg-gray-900">{o}</option>)}
+              style={{
+                background: "rgba(255,255,255,0.04)", border: "1px solid var(--border)",
+                borderRadius: "6px", padding: "7px 10px", color: "var(--text-primary)", fontSize: "12px", outline: "none",
+              }}>
+              <option value="" style={{ background: "#0d1117" }}>{label}</option>
+              {options.filter(Boolean).map((o) => <option key={o} value={o} style={{ background: "#0d1117" }}>{o}</option>)}
             </select>
           ))}
         </div>
@@ -159,18 +168,11 @@ export function IncidentsPage() {
       <div className="overflow-hidden rounded-lg" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-white/5">
+            <tr style={{ borderBottom: "1px solid var(--border)" }}>
               <th className="w-10 p-3"><input type="checkbox" className="accent-blue-500" onChange={(e) => setSelected(e.target.checked ? new Set(incidents.map((i) => i.id)) : new Set())} /></th>
-              <th className="p-3 text-left text-white/50 font-medium">ID</th>
-              <th className="p-3 text-left text-white/50 font-medium">Type</th>
-              <th className="p-3 text-left text-white/50 font-medium">Severity</th>
-              <th className="p-3 text-left text-white/50 font-medium">Source IP</th>
-              <th className="p-3 text-left text-white/50 font-medium">Country</th>
-              <th className="p-3 text-left text-white/50 font-medium">Confidence</th>
-              <th className="p-3 text-left text-white/50 font-medium">MITRE</th>
-              <th className="p-3 text-left text-white/50 font-medium">Status</th>
-              <th className="p-3 text-left text-white/50 font-medium">Time</th>
-              <th className="p-3 text-left text-white/50 font-medium">Actions</th>
+              {["ID", "Type", "Severity", "Source IP", "Country", "Confidence", "MITRE", "Status", "Time", "Actions"].map((h) => (
+                <th key={h} className="p-3 text-left text-[var(--text-tertiary)] text-xs font-medium">{h}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
@@ -178,22 +180,29 @@ export function IncidentsPage() {
               <tr><td colSpan={11} className="p-8 text-center"><Spinner className="mx-auto" /></td></tr>
             )}
             {incidents.map((inc) => (
-                <tr key={inc.id} className="border-b border-white/3 hover:bg-white/2 transition-colors">
+                <tr
+                  key={inc.id}
+                  style={{ borderBottom: "1px solid rgba(255,255,255,0.03)", transition: "background-color 100ms" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.015)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                >
                   <td className="p-3">
                     <button onClick={() => toggleSelect(inc.id)}>
-                      {selected.has(inc.id) ? <CheckSquare className="w-4 h-4 text-blue-400" /> : <Square className="w-4 h-4 text-white/20" />}
+                      {selected.has(inc.id)
+                        ? <CheckSquare className="w-4 h-4 text-blue-400" />
+                        : <Square className="w-4 h-4 text-[var(--text-tertiary)]" />}
                     </button>
                   </td>
-                  <td className="p-3 text-white/50 font-mono">#{inc.id}</td>
+                  <td className="p-3 text-[var(--text-tertiary)] font-mono text-xs">#{inc.id}</td>
                   <td className="p-3">
                     <div className="flex items-center gap-2">
-                      <span>{typeIcon(inc.mlType ?? "")}</span>
-                      <span className="text-white/80 text-xs">{inc.mlType ?? "unknown"}</span>
+                      <span className="text-sm">{typeIcon(inc.mlType ?? "")}</span>
+                      <span className="text-[var(--text-secondary)] text-xs">{inc.mlType ?? "unknown"}</span>
                     </div>
                   </td>
                   <td className="p-3"><SeverityBadge severity={inc.severity} /></td>
-                  <td className="p-3 text-white/60 font-mono text-xs">{inc.sourceIp ?? "—"}</td>
-                  <td className="p-3 text-white/60 text-xs">{inc.threatCountry ?? "—"}</td>
+                  <td className="p-3 text-[var(--text-secondary)] font-mono text-xs">{inc.sourceIp ?? "—"}</td>
+                  <td className="p-3 text-[var(--text-secondary)] text-xs">{inc.threatCountry ?? "—"}</td>
                   <td className="p-3">
                     <span className={`text-xs font-mono ${confidenceColor(inc.mlConfidence ?? 0)}`}>
                       {inc.mlConfidence ? Math.round(inc.mlConfidence * 100) + "%" : "—"}
@@ -202,29 +211,42 @@ export function IncidentsPage() {
                   <td className="p-3">
                     {inc.mitreId && (
                       <a href={`https://attack.mitre.org/techniques/${inc.mitreId}`} target="_blank" rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded text-xs hover:bg-blue-500/20 transition-colors">
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs transition-colors duration-100"
+                        style={{ background: "rgba(37,99,235,0.1)", color: "#60a5fa", border: "1px solid rgba(37,99,235,0.2)" }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(37,99,235,0.18)"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(37,99,235,0.1)"; }}
+                      >
                         {inc.mitreId} <ExternalLink className="w-2.5 h-2.5" />
                       </a>
                     )}
                   </td>
                   <td className="p-3">
                     <select value={inc.status} onChange={(e) => updateStatus.mutate({ id: inc.id, status: e.target.value as "open" | "investigating" | "resolved" | "false_positive" })}
-                      className="bg-white/5 border border-white/10 rounded px-2 py-1 text-white text-xs focus:outline-none">
-                      {["open", "investigating", "resolved", "false_positive"].map((s) => <option key={s} value={s} className="bg-gray-900">{s}</option>)}
+                      style={{
+                        background: "rgba(255,255,255,0.04)", border: "1px solid var(--border)",
+                        borderRadius: "4px", padding: "3px 8px", color: "var(--text-primary)", fontSize: "11px", outline: "none",
+                      }}>
+                      {["open", "investigating", "resolved", "false_positive"].map((s) => <option key={s} value={s} style={{ background: "#0d1117" }}>{s}</option>)}
                     </select>
                   </td>
-                  <td className="p-3 text-white/40 text-xs">{fmtDate(inc.createdAt)}</td>
+                  <td className="p-3 text-[var(--text-tertiary)] text-xs">{fmtDate(inc.createdAt)}</td>
                   <td className="p-3">
                     <div className="flex gap-1">
                       <button
                         onClick={() => setDrawerIncident(inc as Incident)}
-                        className="p-1.5 hover:bg-white/10 rounded text-white/40 hover:text-white/80 transition-colors"
+                        className="p-1.5 rounded text-[var(--text-tertiary)]"
+                        style={{ transition: "background-color 100ms, color 100ms" }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "var(--text-primary)"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text-tertiary)"; }}
                         title="Open details"
                       >
                         <PanelRight className="w-3.5 h-3.5" />
                       </button>
                       <button onClick={() => exportPdf(inc as Incident)}
-                        className="p-1.5 hover:bg-white/10 rounded text-white/40 hover:text-white/80 transition-colors"
+                        className="p-1.5 rounded text-[var(--text-tertiary)]"
+                        style={{ transition: "background-color 100ms, color 100ms" }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "var(--text-primary)"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text-tertiary)"; }}
                         title="Export PDF"
                       >
                         <FileText className="w-3.5 h-3.5" />
@@ -241,7 +263,7 @@ export function IncidentsPage() {
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2">
           <Button size="sm" variant="ghost" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>← Prev</Button>
-          <span className="text-white/40 text-sm">{page} / {totalPages}</span>
+          <span className="text-[var(--text-tertiary)] text-sm">{page} / {totalPages}</span>
           <Button size="sm" variant="ghost" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>Next →</Button>
         </div>
       )}

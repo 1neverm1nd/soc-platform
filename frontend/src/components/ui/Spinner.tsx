@@ -11,7 +11,7 @@ export function PageLoader() {
     <div className="flex items-center justify-center min-h-screen">
       <div className="flex flex-col items-center gap-3">
         <Spinner className="w-10 h-10" />
-        <p className="text-white/50 text-sm">Loading...</p>
+        <p className="text-[var(--text-tertiary)] text-sm">Loading...</p>
       </div>
     </div>
   );

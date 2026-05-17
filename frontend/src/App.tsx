@@ -15,6 +15,7 @@ import { RulesPage } from "@/pages/Rules";
 import { PlaybooksPage } from "@/pages/Playbooks";
 import { NotificationsPage } from "@/pages/Notifications";
 import { MLDashboardPage } from "@/pages/MLDashboard";
+import { BlocklistPage } from "@/pages/Blocklist";
 import { Toaster } from "sonner";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -97,6 +98,13 @@ export default function App() {
           <Route path="/ml">
             <ProtectedRoute>
               <Layout><MLDashboardPage /></Layout>
+              <AttackSimulator />
+            </ProtectedRoute>
+          </Route>
+
+          <Route path="/blocklist">
+            <ProtectedRoute>
+              <Layout><BlocklistPage /></Layout>
               <AttackSimulator />
             </ProtectedRoute>
           </Route>

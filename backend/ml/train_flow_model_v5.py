@@ -199,7 +199,7 @@ def main():
     print(f"  ET   acc={et_acc:.4f}  F1_macro={et_f1:.4f}")
 
     # ── Ensemble: XGB(2) + RF(3) + ET(1) weights ──────────────────────────────
-    print("[5/6] Building ensemble (XGB×2 + RF×3 + ET×1)...")
+    print("[5/6] Building ensemble (XGB x2 + RF x3 + ET x1)...")
     ensemble = ManualVotingEnsemble(
         models=[xgb_clf, rf_clf, et_clf],
         weights=[2, 3, 1],

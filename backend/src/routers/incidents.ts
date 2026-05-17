@@ -12,12 +12,22 @@ import { analyzeIncident as llmAnalyze } from "../services/incidentAnalyzer.js";
 import { TRPCError } from "@trpc/server";
 
 function calcSeverity(type: string, confidence: number, abuseScore: number): "low" | "medium" | "high" | "critical" {
-  const criticalTypes = new Set(["malware", "data-exfiltration", "privilege-escalation", "vulnerability-exploit"]);
-  const highTypes = new Set(["sql-injection", "phishing", "brute-force", "ddos"]);
+  const criticalTypes = new Set([
+    "malware", "data-exfiltration", "privilege-escalation", "vulnerability-exploit",
+    "ransomware", "shellcode", "backdoor",
+  ]);
+  const highTypes = new Set([
+    "sql-injection", "phishing", "brute-force", "ddos",
+    "lateral-movement", "command-and-control", "worm",
+  ]);
+  const mediumTypes = new Set([
+    "unauthorized-access", "port-scanning", "network-analysis", "fuzzing", "cryptomining",
+  ]);
 
+  if (type === "normal") return "low";
   if (criticalTypes.has(type) && confidence > 0.8) return "critical";
   if (criticalTypes.has(type) || (highTypes.has(type) && confidence > 0.75) || abuseScore > 80) return "high";
-  if (highTypes.has(type) || abuseScore > 50) return "medium";
+  if (highTypes.has(type) || mediumTypes.has(type) || abuseScore > 50) return "medium";
   return "low";
 }
 
@@ -134,24 +144,43 @@ export const incidentsRouter = router({
 
       if (!analysis) {
         const actionMap: Record<string, string[]> = {
-          "malware": ["Isolate affected host immediately", "Run full AV scan", "Check for lateral movement", "Preserve forensic artifacts"],
-          "brute-force": ["Block source IP in firewall", "Reset compromised credentials", "Enable account lockout policy", "Review authentication logs"],
-          "sql-injection": ["Block attacker IP via WAF", "Patch vulnerable endpoint", "Review and sanitize all inputs", "Audit database access logs"],
-          "phishing": ["Quarantine phishing emails", "Reset affected user credentials", "Block malicious domain/URL", "Run user awareness training"],
-          "ddos": ["Enable rate limiting / traffic scrubbing", "Contact upstream provider", "Activate CDN DDoS protection", "Monitor bandwidth usage"],
-          "data-exfiltration": ["Block outbound connection immediately", "Identify exfiltrated data scope", "Notify compliance/legal team", "Rotate exposed credentials"],
+          "malware":              ["Isolate affected host immediately", "Run full AV scan", "Check for lateral movement", "Preserve forensic artifacts"],
+          "brute-force":          ["Block source IP in firewall", "Reset compromised credentials", "Enable account lockout policy", "Review authentication logs"],
+          "sql-injection":        ["Block attacker IP via WAF", "Patch vulnerable endpoint", "Review and sanitize all inputs", "Audit database access logs"],
+          "phishing":             ["Quarantine phishing emails", "Reset affected user credentials", "Block malicious domain/URL", "Run user awareness training"],
+          "ddos":                 ["Enable rate limiting / traffic scrubbing", "Contact upstream provider", "Activate CDN DDoS protection", "Monitor bandwidth usage"],
+          "data-exfiltration":    ["Block outbound connection immediately", "Identify exfiltrated data scope", "Notify compliance/legal team", "Rotate exposed credentials"],
           "privilege-escalation": ["Revoke elevated privileges", "Patch exploited vulnerability", "Audit sudo/admin logs", "Review privilege assignment policy"],
-          "unauthorized-access": ["Terminate active session", "Review access control lists", "Enable MFA on targeted account", "Audit access logs"],
-          "port-scanning": ["Block scanning IP at perimeter", "Review exposed services", "Enable port scan detection IDS", "Reduce attack surface"],
-          "vulnerability-exploit": ["Apply security patch immediately", "Enable exploit mitigation (ASLR/DEP)", "Isolate vulnerable system", "Scan for similar vulnerabilities"],
+          "unauthorized-access":  ["Terminate active session", "Review access control lists", "Enable MFA on targeted account", "Audit access logs"],
+          "port-scanning":        ["Block scanning IP at perimeter", "Review exposed services", "Enable port scan detection IDS", "Reduce attack surface"],
+          "vulnerability-exploit":["Apply security patch immediately", "Enable exploit mitigation (ASLR/DEP)", "Isolate vulnerable system", "Scan for similar vulnerabilities"],
+          "ransomware":           ["Isolate host from network immediately", "Restore from clean backup", "Do NOT pay ransom", "Preserve encrypted files for forensics", "Report to authorities"],
+          "lateral-movement":     ["Isolate compromised segments", "Reset all privileged credentials", "Review east-west firewall rules", "Audit Active Directory for anomalies"],
+          "command-and-control":  ["Block C2 domain/IP at firewall", "Kill malicious process", "Identify and remove persistence mechanisms", "Scan for other infected hosts"],
+          "cryptomining":         ["Kill mining process", "Block mining pool domains", "Patch exploited vulnerability", "Audit cloud resources for cost spikes"],
+          "backdoor":             ["Remove backdoor service/file", "Audit startup tasks and cron jobs", "Full system forensics", "Rotate all service credentials"],
+          "shellcode":            ["Kill injected process", "Patch exploited vulnerability", "Check for privilege escalation", "Enable DEP/ASLR system-wide"],
+          "worm":                 ["Network quarantine of infected hosts", "Patch SMB/network share vulnerability", "Remove worm binary", "Scan all accessible hosts"],
+          "fuzzing":              ["Review application crash logs", "Patch boundary conditions", "Enable input validation", "Deploy WAF rules"],
+          "network-analysis":     ["Identify promiscuous mode NICs", "Check for unauthorized packet captures", "Audit who has raw socket access"],
+          "normal":               ["No action required — benign activity confirmed"],
         };
         const iocMap: Record<string, string[]> = {
-          "malware": ["Suspicious process execution", "Unusual network callbacks", "Registry modifications"],
-          "brute-force": ["Multiple failed auth attempts", "High frequency login requests", "Credential stuffing pattern"],
-          "sql-injection": ["Anomalous SQL syntax in request", "Error-based enumeration", "UNION SELECT pattern"],
-          "phishing": ["Spoofed sender domain", "Credential harvesting page", "Malicious attachment/link"],
-          "ddos": ["Traffic volume spike", "SYN/UDP flood pattern", "Botnet source diversity"],
-          "data-exfiltration": ["Large outbound transfer", "Unusual destination IP", "Encrypted C2 channel"],
+          "malware":              ["Suspicious process execution", "Unusual network callbacks", "Registry modifications"],
+          "brute-force":          ["Multiple failed auth attempts", "High frequency login requests", "Credential stuffing pattern"],
+          "sql-injection":        ["Anomalous SQL syntax in request", "Error-based enumeration", "UNION SELECT pattern"],
+          "phishing":             ["Spoofed sender domain", "Credential harvesting page", "Malicious attachment/link"],
+          "ddos":                 ["Traffic volume spike", "SYN/UDP flood pattern", "Botnet source diversity"],
+          "data-exfiltration":    ["Large outbound transfer", "Unusual destination IP", "Encrypted C2 channel"],
+          "ransomware":           ["File encryption activity", "Shadow copy deletion", "Ransom note creation"],
+          "lateral-movement":     ["Pass-the-hash attempt", "SMB lateral spread", "PsExec or WMI remote execution"],
+          "command-and-control":  ["Periodic beacon traffic", "Encrypted C2 channel", "DNS tunneling pattern"],
+          "cryptomining":         ["High CPU utilization", "Mining pool connection", "Stratum protocol traffic"],
+          "backdoor":             ["Unexpected listening port", "Persistence entry in startup", "Unusual outbound connection"],
+          "shellcode":            ["Heap spray pattern", "ROP chain detected", "Process hollowing"],
+          "worm":                 ["Self-replication across shares", "Rapid internal scanning", "Identical payload on multiple hosts"],
+          "fuzzing":              ["Malformed input patterns", "Application crash or exception", "High error rate"],
+          "network-analysis":     ["Promiscuous mode NIC", "Unexpected packet capture process", "ARP spoofing"],
         };
         const type = inc.mlType ?? "unknown";
         analysis = {
