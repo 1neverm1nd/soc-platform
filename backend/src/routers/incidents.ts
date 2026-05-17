@@ -34,10 +34,10 @@ function calcSeverity(type: string, confidence: number, abuseScore: number): "lo
 export const incidentsRouter = router({
   ingest: publicProcedure
     .input(z.object({
-      rawLog: z.string().min(1),
-      sourceIp: z.string().optional(),
-      destinationIp: z.string().optional(),
-      threatCountry: z.string().optional(),
+      rawLog: z.string().min(1).max(8192, "Log too long — max 8192 chars"),
+      sourceIp: z.string().ip({ version: "v4" }).or(z.string().ip({ version: "v6" })).optional(),
+      destinationIp: z.string().ip({ version: "v4" }).or(z.string().ip({ version: "v6" })).optional(),
+      threatCountry: z.string().max(2).optional(),
     }))
     .mutation(async ({ input }) => {
       const [mlResult, threatResult] = await Promise.all([

@@ -327,9 +327,10 @@ export function MLDashboardPage() {
       {/* Architecture badges */}
       <div className="flex flex-wrap gap-1.5">
         {[
-          { label: "XGBoost",          detail: "500 trees",        color: "#3b82f6" },
-          { label: "RandomForest",     detail: "400 trees",        color: "#22c55e" },
-          { label: "Soft Voting",      detail: "equal weight",     color: "#8b5cf6" },
+          { label: "XGBoost",          detail: "600 trees ×2",     color: "#3b82f6" },
+          { label: "RandomForest",     detail: "500 trees ×3",     color: "#22c55e" },
+          { label: "ExtraTrees",       detail: "500 trees ×1",     color: "#10b981" },
+          { label: "Soft Voting",      detail: "2:3:1 weights",    color: "#8b5cf6" },
           { label: "LightGBM",         detail: "SHAP source",      color: "#06b6d4" },
           { label: "Isolation Forest", detail: "anomaly detector", color: "#f97316" },
           { label: "SHAP",             detail: "explanations",     color: "#ec4899" },
@@ -373,7 +374,7 @@ export function MLDashboardPage() {
               <div className="grid grid-cols-3 gap-2">
                 {[
                   ["Dataset",   flow?.dataset ?? "UNSW-NB15"],
-                  ["Algorithm", "XGB+RF Ensemble"],
+                  ["Algorithm", "XGB+RF+ET [2:3:1]"],
                   ["Features",  `${flow?.featureCount ?? 46} network`],
                   ["Train set", `${((flow?.trainSamples ?? 0) / 1000).toFixed(0)}K samples`],
                   ["Test set",  `${((flow?.testSamples  ?? 0) / 1000).toFixed(0)}K samples`],
