@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
-import { ShieldOff, Plus, Trash2, Search } from "lucide-react";
+import { ShieldOff, Plus, Trash2, Search, Download } from "lucide-react";
 import { toast } from "sonner";
 import { fmtDate } from "@/lib/utils";
 
@@ -17,6 +17,20 @@ const INPUT_STYLE: React.CSSProperties = {
 };
 
 export function BlocklistPage() {
+  function handleExportCsv() {
+    const rows = list.data ?? [];
+    if (rows.length === 0) return;
+    const csv = [
+      "ip_address,reason,created_at",
+      ...rows.map((r) => `"${r.ipAddress}","${(r.reason ?? "").replace(/"/g, "'")}","${r.createdAt ?? ""}"`),
+    ].join("\n");
+    const a = document.createElement("a");
+    a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+    a.download = `blocklist_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    toast.success(`Exported ${rows.length} blocked IPs`);
+  }
+
   const [ip, setIp] = useState("");
   const [reason, setReason] = useState("");
   const [search, setSearch] = useState("");
@@ -63,14 +77,28 @@ export function BlocklistPage() {
           <h1 className="text-lg font-semibold text-[var(--text-primary)]">IP Blocklist</h1>
           <p className="text-[var(--text-tertiary)] text-xs mt-0.5">Manage blocked IP addresses</p>
         </div>
-        <div
-          className="flex items-center gap-2 px-3 py-1.5 rounded-md"
-          style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" }}
-        >
-          <ShieldOff className="w-3.5 h-3.5 text-red-400" />
-          <span className="text-red-400 text-xs font-semibold tabular">
-            {list.data?.length ?? 0} blocked
-          </span>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExportCsv}
+            disabled={!list.data?.length}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium"
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid var(--border)", color: "var(--text-secondary)", transition: "background-color 120ms" }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.07)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
+            onMouseDown={(e) => { e.currentTarget.style.transform = "scale(0.97)"; }}
+            onMouseUp={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
+          >
+            <Download className="w-3 h-3" /> Export CSV
+          </button>
+          <div
+            className="flex items-center gap-2 px-3 py-1.5 rounded-md"
+            style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" }}
+          >
+            <ShieldOff className="w-3.5 h-3.5 text-red-400" />
+            <span className="text-red-400 text-xs font-semibold tabular">
+              {list.data?.length ?? 0} blocked
+            </span>
+          </div>
         </div>
       </div>
 
